@@ -25,21 +25,39 @@ new Vue({
       return {
          doi: '',
          bibtex: '',
+         copiedToClipboard: false,
+         loading: false,
       };
    },
+   computed: {
+      ctcButtonClass() {
+         return this.copiedToClipboard ? 'bg-blue-600' : 'bg-gray-200 hover:bg-gray-300 focus:bg-gray-400';
+      },
+      ctcIconClass() {
+         return this.copiedToClipboard ? 'text-white' : 'text-blue-600';
+      },
+   },
    methods: {
+      reset() {
+         this.bibtex = '';
+         this.copiedToClipboard = false;
+      },
       handleSubmit() {
+         this.reset();
          if (!/^10\..+\/.+$/.test(this.doi)) {
             console.error("Invalid DOI");
             return;
          }
+
+         this.loading = true;
 
          const request = this.getRequest(this.doi);
 
          fetch(request)
            .then(this.parseResponse)
            .then(this.cleanBibtex)
-           .then(bibtex => this.bibtex = bibtex);
+           .then(bibtex => this.bibtex = bibtex)
+           .finally(() => this.loading = false);
       },
       getRequest(doi) {
          const headers = new Headers();
@@ -94,7 +112,7 @@ new Vue({
             tags[key] = this.encodeSpecialChars(tags[key]);
          }
 
-         return toBibtex([bibJson], false);
+         return toBibtex([bibJson], false).trim();
       },
       insertDollars(str) {
          return str.replace(/(\{)(\\var[A-Z]?[a-z]*)(\})/, '$1$$$2$$$3')
@@ -104,5 +122,13 @@ new Vue({
 
          return str.replace(regex, m => SPECIAL_CHARS[m]);
       },
+      copyToClipboard() {
+         if (this.bibtex) {
+            navigator.clipboard.writeText(this.bibtex).then(this.ctcSuccess);
+         }
+      },
+      ctcSuccess() {
+         this.copiedToClipboard = true;
+      }
    },
 });

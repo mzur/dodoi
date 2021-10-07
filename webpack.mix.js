@@ -4,4 +4,10 @@ mix.disableSuccessNotifications();
 
 mix.js('src/main.js', 'assets').vue();
 
-// mix.sass('resources/assets/sass/main.scss', 'public/assets/styles');
+mix.postCss('src/main.css', 'assets');
+
+mix.webpackConfig({
+  stats: {
+    children: true,
+  },
+});

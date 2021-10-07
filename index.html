@@ -10,13 +10,22 @@
   <link rel="stylesheet" href="assets/main.css">
 </head>
 
-<body >
-  <div id="app">
-    <form v-on:submit.prevent="handleSubmit">
-      <label>DOI</label>
-      <input type="text" name="doi" v-model="doi">
+<body>
+  <div id="app" class="flex justify-center items-center flex-col h-screen bg-blue-600 p-5">
+    <form class="flex justify-center flex-col" v-on:submit.prevent="handleSubmit">
+      <label class="block text-2xl text-white">Enter a DOI to convert it to BibTeX</label>
+      <div class="relative mt-5">
+        <input class="block w-full py-2 px-4 rounded focus:outline-none focus:ring-4 focus:ring-blue-400 focus:border-transparent" type="text" name="doi" v-model="doi" autofocus placeholder="10.3389/fmars.2017.00083">
+        <span class="flex h-4 w-4 absolute top-3 right-4" v-show="loading">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-4 w-4 bg-blue-500"></span>
+        </span>
+      </div>
     </form>
-    <pre v-show="bibtex" v-text="bibtex"></pre>
+    <div class="mt-5 relative" v-show="bibtex">
+      <pre class="max-w-full overflow-auto py-2 px-4 bg-white rounded outline-none ring-4 ring-blue-400 border-transparent" v-text="bibtex"></pre>
+      <button type="button" class="absolute top-1 right-1 py-2 px-3 rounded" title="Copy BibTeX to clipboard" v-on:click="copyToClipboard" v-bind:class="ctcButtonClass"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" height="32"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path class="fill-current" v-bind:class="ctcIconClass" d="M336 64h-80c0-35.3-28.7-64-64-64s-64 28.7-64 64H48C21.5 64 0 85.5 0 112v352c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48zM192 40c13.3 0 24 10.7 24 24s-10.7 24-24 24-24-10.7-24-24 10.7-24 24-24zm144 418c0 3.3-2.7 6-6 6H54c-3.3 0-6-2.7-6-6V118c0-3.3 2.7-6 6-6h42v36c0 6.6 5.4 12 12 12h168c6.6 0 12-5.4 12-12v-36h42c3.3 0 6 2.7 6 6z"/></svg></button>
+    </div>
   </div>
 
   <script src="assets/main.js"></script>
