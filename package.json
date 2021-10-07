@@ -1,0 +1,25 @@
+{
+  "name": "dodoi",
+  "version": "1.0.0",
+  "description": "Convert a DOI to BibTeX",
+  "scripts": {
+    "dev": "npm run development",
+    "development": "mix",
+    "watch": "mix watch",
+    "watch-poll": "mix watch -- --watch-options-poll=1000",
+    "hot": "mix watch --hot",
+    "prod": "npm run production",
+    "production": "mix --production"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@orcid/bibtex-parse-js": "^0.0.25",
+    "vue": "^2.6.14"
+  },
+  "devDependencies": {
+    "laravel-mix": "^6.0.28",
+    "vue-loader": "^15.9.8",
+    "vue-template-compiler": "^2.6.14"
+  }
+}

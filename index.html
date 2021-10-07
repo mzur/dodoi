@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>DODOI: Convert a DOI to BibTeX</title>
+  <meta name="description" content="Convert a DOI to BibTeX">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="stylesheet" href="assets/main.css">
+</head>
+
+<body >
+  <div id="app">
+    <form v-on:submit.prevent="handleSubmit">
+      <label>DOI</label>
+      <input type="text" name="doi" v-model="doi">
+    </form>
+    <pre v-show="bibtex" v-text="bibtex"></pre>
+  </div>
+
+  <script src="assets/main.js"></script>
+</body>
+
+</html>
