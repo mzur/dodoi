@@ -20,6 +20,13 @@ const SPECIAL_CHARS = {
    'Ü': '\\"{U}',
 };
 
+// Times between subsequent request retry attempts.
+const RETRY_TIMES = [
+   1e+3,
+   5e+3,
+   1e+4,
+];
+
 new Vue({
    el: '#app',
    data() {
@@ -30,6 +37,7 @@ new Vue({
          loading: false,
          error: false,
          errorMessage: '',
+         retryCount: 0,
       };
    },
    computed: {
@@ -71,9 +79,9 @@ new Vue({
          fetch(request)
            .then(this.parseResponse)
            .then(this.cleanBibtex)
-           .then(bibtex => this.bibtex = bibtex)
+           .then(this.finishRequest)
            .catch(this.handleResponseError)
-           .finally(() => this.loading = false);
+           .finally(this.finishLoading);
       },
       getRequest(doi) {
          const headers = new Headers();
@@ -120,9 +128,12 @@ new Vue({
             if (Array.isArray(tags.title)) {
                tags.title = tags.title.map(this.insertDollars)
             } else {
+               // Inject $ into titles where greek characters aren't formatted properly.
+               // E.g. 10.1002/cncr.29046 {\varEpsilon} instead of {$\varEpsilon$}.
                tags.title = this.insertDollars(tags.title);
             }
 
+            // Add a unique suffix to the key (based on the title).
             if (bibJson.citationKey) {
                let digest = sha1(tags.author + tags.title);
                bibJson.citationKey += '-' + digest.substr(0, 7);
@@ -135,7 +146,7 @@ new Vue({
 
          return toBibtex([bibJson], false)
             .trim()
-            // Use two spaces instead of four for indentation.
+            // Use two spaces instead of the default four for indentation.
             .replace(/^  /gm, '');
       },
       insertDollars(str) {
@@ -161,10 +172,27 @@ new Vue({
       handleResponseError(response) {
          if (response instanceof Error) {
             this.handleError(response.message);
+         } else if (response.status === 504 && this.retryCount < RETRY_TIMES.length) {
+            // Retry a few times on gateway timeouts. These seem to occur quite often.
+            setTimeout(this.handleSubmit, RETRY_TIMES[this.retryCount]);
+            this.retryCount += 1;
+            return;
          } else if (response.status >= 400) {
             this.handleError(response.statusText);
          } else {
             this.handleError('Unknown error.');
+         }
+
+         this.retryCount = 0;
+      },
+      finishRequest(bibtex) {
+         this.bibtex = bibtex;
+         this.retryCount = 0;
+      },
+      finishLoading() {
+         // Keep loading if we are waiting on a request retry.
+         if (this.retryCount === 0) {
+            this.loading = false;
          }
       },
    },
