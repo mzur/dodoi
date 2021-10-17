@@ -28,6 +28,8 @@ new Vue({
          bibtex: '',
          copiedToClipboard: false,
          loading: false,
+         error: false,
+         errorMessage: '',
       };
    },
    computed: {
@@ -40,16 +42,25 @@ new Vue({
       cantSubmit() {
          return !this.doi || this.loading;
       },
+      inputClass() {
+         if (this.error) {
+            return 'outline-none ring-4 ring-red-600 border-transparent';
+         }
+
+         return 'focus:outline-none focus:ring-4 focus:ring-blue-400 focus:border-transparent';
+      },
    },
    methods: {
       reset() {
          this.bibtex = '';
          this.copiedToClipboard = false;
+         this.error = false;
+         this.errorMessage = '';
       },
       handleSubmit() {
          this.reset();
          if (!/^10\..+\/.+$/.test(this.doi)) {
-            console.error("Invalid DOI");
+            this.handleError('Invalid DOI.');
             return;
          }
 
@@ -61,6 +72,7 @@ new Vue({
            .then(this.parseResponse)
            .then(this.cleanBibtex)
            .then(bibtex => this.bibtex = bibtex)
+           .catch(this.handleResponseError)
            .finally(() => this.loading = false);
       },
       getRequest(doi) {
@@ -73,9 +85,13 @@ new Vue({
          });
       },
       parseResponse(response) {
+         if (!response.ok) {
+            return Promise.reject(response);
+         }
+
          const contentType = response.headers.get('content-type');
          if (!contentType || !contentType.includes('application/x-bibtex')) {
-            throw new TypeError("The response was no BibTeX!");
+            throw new TypeError("Invalid response content type.");
          }
 
          return response.text();
@@ -137,6 +153,19 @@ new Vue({
       },
       ctcSuccess() {
          this.copiedToClipboard = true;
-      }
+      },
+      handleError(message) {
+         this.error = true;
+         this.errorMessage = message;
+      },
+      handleResponseError(response) {
+         if (response instanceof Error) {
+            this.handleError(response.message);
+         } else if (response.status >= 400) {
+            this.handleError(response.statusText);
+         } else {
+            this.handleError('Unknown error.');
+         }
+      },
    },
 });

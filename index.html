@@ -17,7 +17,7 @@
     <form class="flex justify-center flex-col text-center" v-on:submit.prevent="handleSubmit">
       <label class="block text-2xl text-white">Enter a DOI to convert it to BibTeX</label>
       <div class="relative mt-5 h-10">
-        <input class="block w-full h-full py-2 pl-4 pr-10 rounded focus:outline-none focus:ring-4 focus:ring-blue-400 focus:border-transparent" type="text" name="doi" v-model="doi" autofocus placeholder="10.3389/fmars.2017.00083" v-bind:disabled="loading">
+        <input class="block w-full h-full py-2 pl-4 pr-10 rounded" v-bind:class="inputClass" type="text" name="doi" v-model="doi" autofocus placeholder="10.3389/fmars.2017.00083" v-bind:disabled="loading">
         <button type="submit" class="absolute top-0 right-0 px-2 w-10 h-full text-blue-600 disabled:text-gray-400 disabled:cursor-not-allowed" title="Convert DOI" v-show="!loading" v-bind:disabled="cantSubmit">
           <svg class="inline-block w-full h-full" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!-- Font Awesome Free 5.15.4 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) --><path class="fill-current " d="M256 8c137 0 248 111 248 248S393 504 256 504 8 393 8 256 119 8 256 8zm-28.9 143.6l75.5 72.4H120c-13.3 0-24 10.7-24 24v16c0 13.3 10.7 24 24 24h182.6l-75.5 72.4c-9.7 9.3-9.9 24.8-.4 34.3l11 10.9c9.4 9.4 24.6 9.4 33.9 0L404.3 273c9.4-9.4 9.4-24.6 0-33.9L271.6 106.3c-9.4-9.4-24.6-9.4-33.9 0l-11 10.9c-9.5 9.6-9.3 25.1.4 34.4z"/></svg>
         </button>
@@ -25,6 +25,9 @@
           <span class="animate-ping absolute h-6 w-6 rounded-full bg-blue-400 opacity-75"></span>
           <span class="relative rounded-full h-6 w-6 bg-blue-600"></span>
         </span>
+      </div>
+      <div class="text-center mt-3" v-show="error" v-cloak>
+        <span class="bg-red-600 text-white px-2 py-1 rounded" v-text="errorMessage"></span>
       </div>
     </form>
 
