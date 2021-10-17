@@ -1,0 +1,11 @@
+- [x] Hanle overflow (10.1594/PANGAEA.881896)
+- [x] (Fav-)Icon
+   - https://thenounproject.com/term/dodo/1892675/ (CCBY3.0)
+- [ ] "Go" Button?
+- [x] Link to source
+- [x] Donation
+- [ ] Check for submit of same doi
+- [ ] Handle error, retries (504), DOI not found
+- [ ] Disable input on loading
+- [ ] Remove "\.+", "-_:${}" special chars from item key
+- [ ] Indent with only two spaces
