@@ -117,7 +117,10 @@ new Vue({
             tags[key] = this.encodeSpecialChars(tags[key]);
          }
 
-         return toBibtex([bibJson], false).trim();
+         return toBibtex([bibJson], false)
+            .trim()
+            // Use two spaces instead of four for indentation.
+            .replace(/^  /gm, '');
       },
       insertDollars(str) {
          return str.replace(/(\{)(\\var[A-Z]?[a-z]*)(\})/, '$1$$$2$$$3')
