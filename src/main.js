@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import sha1 from 'js-sha1';
 import {toJSON, toBibtex} from "@orcid/bibtex-parse-js";
 
 // Inspired by doi2bib:
@@ -104,7 +105,8 @@ new Vue({
             }
 
             if (bibJson.citationKey) {
-               bibJson.citationKey += tags.title.split(' ')[0];
+               let digest = sha1(tags.author + tags.title);
+               bibJson.citationKey += '-' + digest.substr(0, 7);
             }
          }
 
