@@ -37,6 +37,9 @@ new Vue({
       ctcIconClass() {
          return this.copiedToClipboard ? 'text-white' : 'text-blue-600';
       },
+      cantSubmit() {
+         return !this.doi || this.loading;
+      },
    },
    methods: {
       reset() {
