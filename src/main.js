@@ -136,7 +136,7 @@ new Vue({
             // Add a unique suffix to the key (based on the title).
             if (bibJson.citationKey) {
                let digest = sha1(tags.author + tags.title);
-               bibJson.citationKey += '-' + digest.substr(0, 7);
+               bibJson.citationKey += digest.substr(0, 7);
             }
          }
 
